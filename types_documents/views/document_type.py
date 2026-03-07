@@ -1,9 +1,16 @@
 import json
 from django.http import JsonResponse, HttpResponseNotAllowed
 from django.views.decorators.csrf import csrf_exempt
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from rest_framework_simplejwt.authentication import JWTAuthentication
 from ..models.document_type import DocumentType
 
 @csrf_exempt
+@api_view(["GET"])
+@authentication_classes([JWTAuthentication, SessionAuthentication, BasicAuthentication])
+@permission_classes([IsAuthenticated])
 def document_types_list(request):
     if request.method != "GET":
         return HttpResponseNotAllowed(["GET"])
@@ -17,6 +24,9 @@ def document_types_list(request):
         return JsonResponse({"error": str(e)}, status=500)
 
 @csrf_exempt
+@api_view(["POST"])
+@authentication_classes([JWTAuthentication, SessionAuthentication, BasicAuthentication])
+@permission_classes([IsAuthenticated])
 def document_type_create(request):
     if request.method != "POST":
         return HttpResponseNotAllowed(["POST"])
@@ -35,6 +45,9 @@ def document_type_create(request):
     }, status=201)
 
 @csrf_exempt
+@api_view(["DELETE"])
+@authentication_classes([JWTAuthentication, SessionAuthentication, BasicAuthentication])
+@permission_classes([IsAuthenticated])
 def document_type_delete(request, pk):
     if request.method != "DELETE":
         return HttpResponseNotAllowed(["DELETE"])
@@ -56,6 +69,9 @@ def document_type_delete(request, pk):
 
 
 @csrf_exempt
+@api_view(["PUT"])
+@authentication_classes([JWTAuthentication, SessionAuthentication, BasicAuthentication])
+@permission_classes([IsAuthenticated])
 def document_type_edit(request, pk):
     if request.method != "PUT":
         return HttpResponseNotAllowed(["PUT"])

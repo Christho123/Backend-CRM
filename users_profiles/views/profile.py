@@ -83,7 +83,7 @@ class PublicProfileView(generics.RetrieveAPIView):
     """
 
     serializer_class = PublicProfileSerializer
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [permissions.IsAuthenticated]
     queryset = User.objects.filter(is_active=True)
     
     def get_object(self):
@@ -167,7 +167,7 @@ class ProfileSearchView(generics.ListAPIView):
     """
 
     serializer_class = PublicProfileSerializer
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [permissions.IsAuthenticated]
     queryset = User.objects.filter(is_active=True)
     
     def get_queryset(self):

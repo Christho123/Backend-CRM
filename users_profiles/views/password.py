@@ -41,7 +41,7 @@ class PasswordChangeView(APIView):
 class PasswordResetView(APIView):
     """Vista para solicitar restablecimiento de contraseña"""
     
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [permissions.IsAuthenticated]
     
     def post(self, request):
         """Solicita el restablecimiento de contraseña"""
@@ -76,7 +76,7 @@ class PasswordResetView(APIView):
 class PasswordResetConfirmView(APIView):
     """Vista para confirmar el restablecimiento de contraseña"""
     
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [permissions.IsAuthenticated]
     
     def post(self, request):
         """Confirma el restablecimiento de contraseña"""
@@ -131,7 +131,7 @@ class PasswordResetConfirmView(APIView):
 class PasswordStrengthView(APIView):
     """Vista para validar la fortaleza de una contraseña"""
     
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [permissions.IsAuthenticated]
     
     def post(self, request):
         """Valida la fortaleza de una contraseña"""
@@ -170,7 +170,7 @@ class PasswordHistoryView(APIView):
 class PasswordPolicyView(APIView):
     """Vista para obtener la política de contraseñas"""
     
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [permissions.IsAuthenticated]
     
     def get(self, request):
         """Retorna la política de contraseñas"""

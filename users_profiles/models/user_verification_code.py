@@ -18,12 +18,13 @@ class UserVerificationCode(models.Model):
 
     code = models.CharField(max_length=255, blank=True, null=True, verbose_name='Código')
     verification_type = models.CharField(
-        max_length=50, 
+        max_length=50,
         default='email_verification',
         choices=[
             ('email_verification', 'Verificación de email'),
             ('email_change', 'Cambio de email'),
             ('password_change', 'Cambio de contraseña'),
+            ('login_2fa', 'Verificación de inicio de sesión'),
         ],
         verbose_name='Tipo de verificación'
     )

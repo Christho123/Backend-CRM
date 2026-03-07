@@ -6,20 +6,31 @@ from django.utils.translation import gettext_lazy as _
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
 
+from users_profiles.models.user_verification_code import UserVerificationCode
+
 User = get_user_model()
 try:
     from audits.services import AuditService
 except Exception:
     AuditService = None
 
+try:
+    from users_profiles.services.verification_service import VerificationService
+except Exception:
+    VerificationService = None
+
 
 class LoginSerializer(serializers.Serializer):
     email = serializers.CharField(max_length=255, required=True, write_only=True)
     password = serializers.CharField(required=True, write_only=True)
+    code = serializers.CharField(required=False, allow_null=True, allow_blank=True, write_only=True)
+    challenge_id = serializers.IntegerField(required=False, write_only=True)
 
     def validate(self, data):
         email = data.get('email')
         password = data.get('password')
+        code = data.get('code')
+        challenge_id = data.get('challenge_id')
 
         if not email or not password:
             raise serializers.ValidationError(_('Se requieres email y contraseña.'))
@@ -37,7 +48,61 @@ class LoginSerializer(serializers.Serializer):
         
         if not user.is_active:
             raise AuthenticationFailed(_('Cuenta no activada.'))
-        
+
+        # Paso 1: no se envió código → generar y enviar código 2FA
+        if not code:
+            if not VerificationService:
+                raise AuthenticationFailed(_('El servicio de verificación no está disponible.'))
+
+            try:
+                verification_code = VerificationService.send_verification_email(
+                    user=user,
+                    verification_type='login_2fa',
+                )
+            except Exception:
+                # Si falla el envío del correo, no permitir continuar
+                raise AuthenticationFailed(_('No se pudo enviar el código de verificación. Intenta nuevamente.'))
+
+            return {
+                '2fa_required': True,
+                'challenge_id': verification_code.id,
+                'email': user.email,
+                'message': _('Se ha enviado un código de verificación a tu correo electrónico.'),
+            }
+
+        # Paso 2: se envió código → validar código 2FA y emitir tokens
+        qs = UserVerificationCode.objects.filter(
+            user=user,
+            verification_type='login_2fa',
+            is_used=False,
+        )
+        # Si viene challenge_id, lo usamos como filtro adicional (opcional)
+        if challenge_id:
+            qs = qs.filter(id=challenge_id)
+
+        verification = qs.order_by('-created_at').first()
+        if not verification:
+            raise AuthenticationFailed(_('El código de verificación no es válido o ya fue utilizado.'))
+
+        # Verificar estado del código
+        if verification.is_locked():
+            raise AuthenticationFailed(_('El código está temporalmente bloqueado por múltiples intentos fallidos.'))
+
+        if verification.is_expired():
+            verification.mark_as_used()
+            raise AuthenticationFailed(_('El código de verificación ha expirado.'))
+
+        if verification.code != str(code).strip():
+            # Intento fallido
+            verification.increment_failed_attempts()
+            if verification.failed_attempts >= 5:
+                verification.lock_temporarily(minutes=15)
+            raise AuthenticationFailed(_('El código de verificación es incorrecto.'))
+
+        # Código correcto → marcar como usado
+        verification.mark_as_used()
+
+        # Emitir tokens JWT
         refresh = RefreshToken.for_user(user)
         access = refresh.access_token
 
@@ -45,7 +110,12 @@ class LoginSerializer(serializers.Serializer):
         request = self.context.get("request")
         if AuditService and request is not None:
             try:
-                session = AuditService.open_login_session(request=request, user=user, refresh=refresh, access=access)
+                session = AuditService.open_login_session(
+                    request=request,
+                    user=user,
+                    refresh=refresh,
+                    access=access,
+                )
                 session_id = session.id
             except Exception:
                 session_id = None
@@ -58,6 +128,7 @@ class LoginSerializer(serializers.Serializer):
             'access': str(access),
             'user_id': user.id,
             'audit_session_id': session_id,
+            '2fa_verified': True,
         }
 
 

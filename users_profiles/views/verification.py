@@ -225,7 +225,7 @@ class EmailChangeConfirmView(APIView):
 class EmailVerificationView(APIView):
     """Vista para solicitar verificación de email de registro"""
 
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request):
         """Solicita verificación de email"""
@@ -271,7 +271,7 @@ class EmailVerificationView(APIView):
 class EmailVerificationConfirmView(APIView):
     """Vista para confirmar verificación de email de registro"""
 
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request):
         """Confirma la verificación de email"""

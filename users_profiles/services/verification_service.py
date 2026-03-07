@@ -20,7 +20,7 @@ class VerificationService:
             verification_type: Tipo de verificación
             
         Returns:
-            bool: True si se envió exitosamente
+            UserVerificationCode: instancia creada con el código enviado
             
         Raises:
             ValidationError: Si hay error al enviar el email
@@ -48,7 +48,7 @@ class VerificationService:
                     fail_silently=False
                 )
                 
-                return True
+                return verification_code
                 
         except Exception as e:
             raise ValidationError(f"Error al enviar email de verificación: {str(e)}")
@@ -301,6 +301,43 @@ class VerificationService:
                 
                 <p>Este código expirará en 15 minutos.</p>
                 <p>Si no solicitaste este cambio, puedes ignorar este email.</p>
+                
+                <hr style="margin: 30px 0; border: none; border-top: 1px solid #eee;">
+                <p style="color: #666; font-size: 12px;">Saludos,<br>Administración Sistema CRM</p>
+            </div>
+            """
+        
+        elif verification_type == 'login_2fa':
+            subject = "Código de acceso - Sistema CRM"
+            message = f"""
+            Hola {full_name},
+            
+            Se ha solicitado un inicio de sesión en Sistema CRM utilizando tu cuenta.
+            Para completar el acceso, utiliza el siguiente código:
+            
+            CÓDIGO DE ACCESO: {verification_code.code}
+            
+            Este código expirará en 15 minutos.
+            
+            Si no fuiste tú quien intentó iniciar sesión, te recomendamos cambiar tu contraseña y contactar al administrador.
+            
+            Saludos,
+            Administración Sistema CRM
+            """
+            
+            html_message = f"""
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                <h2 style="color: #333;">Código de acceso - Sistema CRM</h2>
+                <p>Hola {full_name},</p>
+                <p>Se ha solicitado un inicio de sesión en Sistema CRM utilizando tu cuenta.</p>
+                <p>Para completar el acceso, utiliza el siguiente código:</p>
+                
+                <div style="background-color: #f5f5f5; padding: 20px; text-align: center; margin: 20px 0; border-radius: 5px;">
+                    <h1 style="color: #28a745; font-size: 32px; margin: 0; letter-spacing: 5px;">{verification_code.code}</h1>
+                </div>
+                
+                <p>Este código expirará en 15 minutos.</p>
+                <p>Si no fuiste tú quien intentó iniciar sesión, te recomendamos cambiar tu contraseña y contactar al administrador.</p>
                 
                 <hr style="margin: 30px 0; border: none; border-top: 1px solid #eee;">
                 <p style="color: #666; font-size: 12px;">Saludos,<br>Administración Sistema CRM</p>
