@@ -144,11 +144,11 @@ class EmployeesAdmin(admin.ModelAdmin):
         if hasattr(obj, 'is_active'):
             if obj.is_active:
                 return format_html(
-                    '<span style="color: green; font-weight: bold;">✓ Activo</span>'
+                    '<span style="color: green; font-weight: bold;"> Activo</span>'
                 )
             else:
                 return format_html(
-                    '<span style="color: red; font-weight: bold;">✗ Inactivo</span>'
+                    '<span style="color: red; font-weight: bold;"> Inactivo</span>'
                 )
         else:
             return format_html(

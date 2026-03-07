@@ -171,10 +171,10 @@ class VerificationService:
                     fail_silently=False
                 )
                 
-                print(f"✅ Email enviado exitosamente a {new_email}")
+                print(f" Email enviado exitosamente a {new_email}")
                 
             except Exception as email_error:
-                print(f"⚠️ Error al enviar email: {str(email_error)}")
+                print(f"️ Error al enviar email: {str(email_error)}")
                 # No lanzar excepción aquí, el código ya se creó
                 
             return True

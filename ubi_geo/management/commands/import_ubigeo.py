@@ -130,4 +130,4 @@ class Command(BaseCommand):
                     n += int(created); u += int(not created)
             self.stdout.write(f"Districts: +{n} upd:{u} skip:{s}")
 
-        self.stdout.write(self.style.SUCCESS("Importación completada ✔"))
+        self.stdout.write(self.style.SUCCESS("Importación completada "))

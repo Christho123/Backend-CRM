@@ -125,7 +125,7 @@ class VerificationStatusView(APIView):
 
         return Response({
             'user_email': user.email,
-            # ✅ tu modelo expone email_verified_at, no email_verified
+            #  tu modelo expone email_verified_at, no email_verified
             'email_verified': bool(getattr(user, 'email_verified_at', None)),
             'active_verifications': verification_status
         })
@@ -203,7 +203,7 @@ class EmailChangeConfirmView(APIView):
                     }, status=status.HTTP_400_BAD_REQUEST)
                 
                 request.user.email = new_email
-                # ✅ usamos timestamp en lugar de booleano
+                #  usamos timestamp en lugar de booleano
                 setattr(request.user, 'email_verified_at', timezone.now())
                 request.user.save()
 
@@ -241,7 +241,7 @@ class EmailVerificationView(APIView):
             try:
                 user = User.objects.get(email=email)
 
-                # ✅ usa email_verified_at
+                #  usa email_verified_at
                 if getattr(user, 'email_verified_at', None):
                     return Response({'error': 'Este email ya está verificado'},
                                     status=status.HTTP_400_BAD_REQUEST)

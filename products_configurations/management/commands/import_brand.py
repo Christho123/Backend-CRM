@@ -80,5 +80,5 @@ class Command(BaseCommand):
                         updated += 1
 
         self.stdout.write(self.style.SUCCESS(
-            f"Importación completada ✔  Nuevas: {created} | Actualizadas: {updated} | Omitidas: {skipped}"
+            f"Importación completada   Nuevas: {created} | Actualizadas: {updated} | Omitidas: {skipped}"
         ))

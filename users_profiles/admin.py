@@ -90,9 +90,7 @@ class CustomUserAdmin(BaseUserAdmin):
     filter_horizontal = ("groups", "user_permissions")
 
 
-# =======================
 # UserVerificationCode
-# =======================
 
 def _get(obj, *names, default="—"):
     for n in names:

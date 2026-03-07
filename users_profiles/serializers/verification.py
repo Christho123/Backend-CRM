@@ -23,9 +23,6 @@ from ..models.user_verification_code import UserVerificationCode
 User = get_user_model()
 
 
-# =====================================================
-# Helpers para obtener las choices desde el propio modelo
-# =====================================================
 def _verification_type_choices() -> List[Tuple[str, str]]:
     """
     Obtiene las choices reales del campo `verification_type` del modelo,
@@ -46,9 +43,7 @@ def _verification_type_choices() -> List[Tuple[str, str]]:
     ]
 
 
-# =====================================================
 # Serializers
-# =====================================================
 
 class VerificationCodeSerializer(serializers.ModelSerializer):
     """Serializer para códigos de verificación del modelo UserVerificationCode"""
