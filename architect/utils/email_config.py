@@ -5,5 +5,5 @@ EMAIL_CONFIG = {
     'EMAIL_USE_TLS': True,
     'EMAIL_HOST_USER': 'qrqdsq45@gmail.com',
     'EMAIL_HOST_PASSWORD': 'ifgf hqab djtf afus',
-    'DEFAULT_FROM_EMAIL': 'Administración ERP <qrqdsq45@gmail.com>'
+    'DEFAULT_FROM_EMAIL': 'Administración CRM <qrqdsq45@gmail.com>'
 }

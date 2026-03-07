@@ -204,7 +204,7 @@ class VerificationService:
             message = f"""
             Hola {full_name},
             
-            Gracias por registrarte en MyCell. Para verificar tu email, utiliza el siguiente código:
+            Gracias por registrarte en Sistema CRM. Para verificar tu email, utiliza el siguiente código:
             
             CÓDIGO DE VERIFICACIÓN: {verification_code.code}
             
@@ -213,14 +213,14 @@ class VerificationService:
             Si no solicitaste esta verificación, puedes ignorar este email.
             
             Saludos,
-            Administración MyCell
+            Administración Sistema CRM
             """
             
             html_message = f"""
             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-                <h2 style="color: #333;">Código de verificación - MyCell</h2>
+                <h2 style="color: #333;">Código de verificación - Sistema CRM</h2>
                 <p>Hola {full_name},</p>
-                <p>Gracias por registrarte en MyCell. Para verificar tu email, utiliza el siguiente código:</p>
+                <p>Gracias por registrarte en Sistema CRM. Para verificar tu email, utiliza el siguiente código:</p>
                 
                 <div style="background-color: #f5f5f5; padding: 20px; text-align: center; margin: 20px 0; border-radius: 5px;">
                     <h1 style="color: #007bff; font-size: 32px; margin: 0; letter-spacing: 5px;">{verification_code.code}</h1>
@@ -230,12 +230,12 @@ class VerificationService:
                 <p>Si no solicitaste esta verificación, puedes ignorar este email.</p>
                 
                 <hr style="margin: 30px 0; border: none; border-top: 1px solid #eee;">
-                <p style="color: #666; font-size: 12px;">Saludos,<br>Administración MyCell</p>
+                <p style="color: #666; font-size: 12px;">Saludos,<br>Administración Sistema CRM</p>
             </div>
             """
             
         elif verification_type == 'email_change':
-            subject = "Código de confirmación de cambio de email - MyCell"
+            subject = "Código de confirmación de cambio de email - Sistema CRM"
             message = f"""
             Hola {full_name},
             
@@ -250,12 +250,12 @@ class VerificationService:
             Si no solicitaste este cambio, puedes ignorar este email.
             
             Saludos,
-            Administración MyCell
+            Administración Sistema CRM
             """
             
             html_message = f"""
             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-                <h2 style="color: #333;">Código de confirmación de cambio de email - MyCell</h2>
+                <h2 style="color: #333;">Código de confirmación de cambio de email - Sistema CRM</h2>
                 <p>Hola {full_name},</p>
                 <p>Has solicitado cambiar tu email a: <strong>{new_email}</strong></p>
                 <p>Para confirmar este cambio, utiliza el siguiente código:</p>
@@ -268,16 +268,16 @@ class VerificationService:
                 <p>Si no solicitaste este cambio, puedes ignorar este email.</p>
                 
                 <hr style="margin: 30px 0; border: none; border-top: 1px solid #eee;">
-                <p style="color: #666; font-size: 12px;">Saludos,<br>Administración MyCell</p>
+                <p style="color: #666; font-size: 12px;">Saludos,<br>Administración Sistema CRM</p>
             </div>
             """
             
         elif verification_type == 'password_change':
-            subject = "Código de recuperación de contraseña - MyCell"
+            subject = "Código de recuperación de contraseña - Sistema CRM"
             message = f"""
             Hola {full_name},
             
-            Has solicitado recuperar tu contraseña en MyCell. Para crear una nueva contraseña, utiliza el siguiente código:
+            Has solicitado recuperar tu contraseña en Sistema CRM. Para crear una nueva contraseña, utiliza el siguiente código:
             
             CÓDIGO DE RECUPERACIÓN: {verification_code.code}
             
@@ -286,12 +286,12 @@ class VerificationService:
             Si no solicitaste este cambio, puedes ignorar este email.
             
             Saludos,
-            Administración MyCell
+            Administración Sistema CRM
             """
             
             html_message = f"""
             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-                <h2 style="color: #333;">Código de recuperación de contraseña - MyCell</h2>
+                <h2 style="color: #333;">Código de recuperación de contraseña - Sistema CRM</h2>
                 <p>Hola {full_name},</p>
                 <p>Has solicitado recuperar tu contraseña en MyCell. Para crear una nueva contraseña, utiliza el siguiente código:</p>
                 
@@ -303,7 +303,7 @@ class VerificationService:
                 <p>Si no solicitaste este cambio, puedes ignorar este email.</p>
                 
                 <hr style="margin: 30px 0; border: none; border-top: 1px solid #eee;">
-                <p style="color: #666; font-size: 12px;">Saludos,<br>AdministraciónMyCell</p>
+                <p style="color: #666; font-size: 12px;">Saludos,<br>Administración Sistema CRM</p>
             </div>
             """
         
