@@ -1,0 +1,51 @@
+﻿id;name;description;country_id
+1;Jakemy;Fabricante de herramientas y kits de reparación para celulares y electrónica.;42
+2;Kaisi;Marca especializada en kits de herramientas para técnicos de celulares.;42
+3;iFixit;Empresa estadounidense que fabrica herramientas y guías para reparación de dispositivos.;66
+4;Sunshine;Fabricante de estaciones de soldado, microscopios y herramientas electrónicas.;42
+5;Yaxun;Marca de herramientas electrónicas y estaciones de soldado para reparación.;42
+6;Relife;Fabricante de herramientas profesionales para reparación de teléfonos.;42
+7;Qianli;Marca líder en instrumentos de precisión para técnicos de celulares.;42
+8;Mechanic;Fabricante de productos para soldadura y reparación de placas.;42
+9;Best;Marca de accesorios, herramientas y productos de soldadura para técnicos.;42
+10;Amtech;Productor de flux y materiales para soldadura electrónica.;66
+11;Goot;Marca japonesa de herramientas de soldadura y estaño.;125
+12;Quick;Fabricante de estaciones de soldadura y reballing.;42
+13;Jovy;Marca de equipos de rework y soldadura BGA.;222
+14;Baseus;Fabricante de cables, cargadores y accesorios móviles premium.;42
+15;UGREEN;Empresa que fabrica accesorios electrónicos de alta calidad.;42
+16;Anker;Marca reconocida de cargadores, cables y power banks.;42
+17;Mcdodo;Fabricante de cables y cargadores inteligentes con diseño innovador.;42
+18;Aukey;Marca de accesorios tecnológicos como cargadores y hubs USB.;42
+19;LDNIO;Fabricante de cargadores, regletas y accesorios eléctricos.;42
+20;Remax;Marca de accesorios móviles como cables, audífonos y cargadores.;42
+21;Hoco;Fabricante de accesorios móviles económicos.;42
+22;Energizer;Marca estadounidense de baterías y power banks.;66
+23;Pineng;Fabricante de power banks y cargadores portátiles.;42
+24;Romoss;Marca de power banks y cargadores rápidos.;42
+25;Oraimo;Fabricante de accesorios móviles y electrónicos.;167
+26;Logitech;Fabricante suizo de periféricos como teclados, ratones y cámaras.;216
+27;Redragon;Marca de periféricos gamer de gama media y alta.;42
+28;Razer;Fabricante estadounidense de periféricos y laptops gamer.;66
+29;Corsair;Fabricante de hardware y periféricos gamer.;66
+30;HyperX;Marca de Kingston especializada en productos gamer.;66
+31;HP;Fabricante de computadoras, impresoras y periféricos.;66
+32;Dell;Empresa estadounidense de hardware y periféricos.;66
+33;Keychron;Fabricante de teclados mecánicos premium.;42
+34;Apple;Fabricante líder de smartphones, tablets y laptops.;66
+35;Samsung;Conglomerado surcoreano de electrónica y tecnología.;50
+36;Xiaomi;Fabricante de smartphones y dispositivos inteligentes.;42
+37;Oppo;Marca china de teléfonos inteligentes.;42
+38;Realme;Submarca de Oppo enfocada en smartphones accesibles.;42
+39;Vivo;Fabricante de smartphones y accesorios tecnológicos.;42
+40;Honor;Marca de smartphones antes subsidiaria de Huawei.;42
+41;Infinix;Fabricante de smartphones y accesorios.;92
+42;Tecno;Fabricante de teléfonos inteligentes enfocado en mercados emergentes.;42
+43;Spigen;Fabricante de fundas y protectores para móviles.;50
+44;Nillkin;Marca china de fundas, protectores y accesorios móviles.;42
+45;ESR;Fabricante de fundas, protectores y accesorios tecnológicos.;42
+46;Ringke;Marca surcoreana de fundas y protectores.;50
+47;UAG;Fabricante de carcasas resistentes para móviles y tablets.;66
+48;OtterBox;Marca estadounidense de fundas protectoras premium.;66
+49;Tianma;Fabricante de pantallas y repuestos OEM.;42
+50;BOE;Líder mundial en la fabricación de paneles y pantallas LCD/OLED.;42
