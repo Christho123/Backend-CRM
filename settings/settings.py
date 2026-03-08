@@ -82,9 +82,9 @@ pymysql.install_as_MySQLdb()
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'erp',
+        'NAME': 'crm',
         'USER': 'root',
-        'PASSWORD': '123456',
+        'PASSWORD': 'Reflexo159//',
         'HOST': '127.0.0.1',
         'PORT': '3306',
         'OPTIONS': {
@@ -214,7 +214,7 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'qrqdsq45@gmail.com'
 EMAIL_HOST_PASSWORD = 'ifgf hqab djtf afus'
-DEFAULT_FROM_EMAIL = 'Administración ERP <qrqdsq45@gmail.com>'
+DEFAULT_FROM_EMAIL = 'Administración CRM <qrqdsq45@gmail.com>'
 
 # URL del frontend para enlaces de verificación
 FRONTEND_URL = config('FRONTEND_URL', default='http://localhost:3000')
