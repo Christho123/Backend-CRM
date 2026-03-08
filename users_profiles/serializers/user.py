@@ -171,9 +171,8 @@ class PublicRegisterSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         validated_data.pop('password_confirm')
         password = validated_data.pop('password')
-        user = User.objects.create_user(password=password, **validated_data)
-        user.is_active = True
-        user.save(update_fields=['is_active'])
+        email = validated_data.pop('email')
+        user = User.objects.create_superuser(email=email, password=password, **validated_data)
         return user
 
 
