@@ -6,6 +6,8 @@ from types_documents.models import DocumentType
 from architect.models.permission import Role
 from ubi_geo.models import Region, Province, District
 from ubi_geo.serializers import RegionSerializer, ProvinceSerializer, DistrictSerializer
+from settings.timezone_utils import PeruDateTimeField
+
 
 class EmployeeSerializer(serializers.ModelSerializer):
     region = RegionSerializer(read_only=True)
@@ -53,6 +55,8 @@ class EmployeeSerializer(serializers.ModelSerializer):
             'does_not_exist': 'El rol seleccionado no existe.'
         }
     )
+    created_at = PeruDateTimeField(read_only=True)
+    updated_at = PeruDateTimeField(read_only=True)
 
     class Meta:
         model = Employees

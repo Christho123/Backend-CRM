@@ -4,6 +4,7 @@ from django.http import JsonResponse, HttpResponseNotAllowed
 from django.views.decorators.csrf import csrf_exempt
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
+from settings.timezone_utils import to_peru_iso
 from ..models.supplier import Supplier
 from datetime import datetime
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
@@ -51,8 +52,8 @@ def supplier_list(request):
                 {"id": s.district.id, "name": s.district.name}
                 if s.district else None
             ),
-            "created_at": s.created_at.isoformat() if s.created_at else None,
-            "updated_at": s.updated_at.isoformat() if s.updated_at else None
+            "created_at": to_peru_iso(s.created_at),
+            "updated_at": to_peru_iso(s.updated_at)
         })
     return JsonResponse({"suppliers": data})
 
@@ -216,8 +217,8 @@ def supplier_detail(request, pk):
                 {"id": supplier.district.id, "name": supplier.district.name}
                 if supplier.district else None
             ),
-            "created_at": supplier.created_at.isoformat() if supplier.created_at else None,
-            "updated_at": supplier.updated_at.isoformat() if supplier.updated_at else None
+            "created_at": to_peru_iso(supplier.created_at),
+            "updated_at": to_peru_iso(supplier.updated_at)
         }
         return JsonResponse(data)
     except Supplier.DoesNotExist:

@@ -2,6 +2,7 @@ from rest_framework import serializers
 from django.contrib.auth import authenticate
 from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth.models import update_last_login
+from settings.timezone_utils import PeruDateTimeField
 
 class PasswordChangeSerializer(serializers.Serializer):
     """Serializer para cambio de contraseña con verificación de contraseña actual"""
@@ -121,13 +122,8 @@ class PasswordStrengthSerializer(serializers.Serializer):
 
 
 class PasswordHistorySerializer(serializers.Serializer):
-    """Serializer para historial de cambios de contraseña"""
-    
-    # Fecha y hora del cambio
-    changed_at = serializers.DateTimeField(
-        read_only=True,
-        help_text='Fecha del cambio de contraseña'
-    )
+    """Serializer para historial de cambios de contraseña (fechas en hora Perú)."""
+    changed_at = PeruDateTimeField(read_only=True, help_text='Fecha del cambio de contraseña')
     
     # IP desde donde se realizó el cambio (para auditoría)
     ip_address = serializers.CharField(

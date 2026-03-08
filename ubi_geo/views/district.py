@@ -6,13 +6,14 @@ from ubi_geo.serializers.district import DistrictSerializer
 
 class DistrictViewSet(ReadOnlyModelViewSet):
     """
-    GET /api/districts/                  -> lista (se puede filtrar)
+    GET /api/districts/                  -> lista (se puede filtrar, sin paginación)
     GET /api/districts/{id}/             -> detalle
 
     Filtros por querystring:
       - ?province=<id>           -> distritos de esa provincia
     """
     serializer_class = DistrictSerializer
+    pagination_class = None
 
     def get_queryset(self):
         qs = (

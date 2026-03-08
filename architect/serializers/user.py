@@ -1,22 +1,24 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
+from settings.timezone_utils import PeruDateTimeField
 
 User = get_user_model()
 
 
 class UserSerializer(serializers.ModelSerializer):
-    # Campos de nombres de llaves foráneas
     document_type_name = serializers.CharField(source='document_type.name', read_only=True)
     country_name = serializers.CharField(source='country.name', read_only=True)
-    
-    # Campo concatenado de nombre completo
     full_name = serializers.SerializerMethodField()
-    
-    # URL de la foto
     photo_url_display = serializers.SerializerMethodField()
-    
-    # Solo para creación: contraseña write_only (se hashea en create)
     password = serializers.CharField(write_only=True, required=False, min_length=8)
+
+    last_session = PeruDateTimeField(read_only=True)
+    email_verified_at = PeruDateTimeField(read_only=True)
+    last_login = PeruDateTimeField(read_only=True)
+    date_joined = PeruDateTimeField(read_only=True)
+    created_at = PeruDateTimeField(read_only=True)
+    updated_at = PeruDateTimeField(read_only=True)
+    deleted_at = PeruDateTimeField(read_only=True)
 
     class Meta:
         model = User

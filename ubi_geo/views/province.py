@@ -6,13 +6,14 @@ from ubi_geo.serializers.province import ProvinceSerializer
 
 class ProvinceViewSet(ReadOnlyModelViewSet):
     """
-    GET /api/provinces/                 -> lista (se puede filtrar)
+    GET /api/provinces/                 -> lista (se puede filtrar, sin paginación)
     GET /api/provinces/{id}/            -> detalle
 
     Filtros por querystring:
       - ?region=<id>            -> provincias de esa región
     """
     serializer_class = ProvinceSerializer
+    pagination_class = None
 
     def get_queryset(self):
         qs = Province.objects.select_related("region").filter(deleted_at__isnull=True).order_by("name")

@@ -6,6 +6,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from ..models import AuditEvent, AuditSession
+from ..pagination import AuditPageNumberPagination
 from ..serializers import AuditEventSerializer, AuditEventTableSerializer
 from users_profiles.serializers.user import UserSerializer as FullUserSerializer
 
@@ -16,16 +17,17 @@ class AuditActionsTableView(generics.ListAPIView):
     """
     GET general: tabla de acciones (movimientos).
 
-    Filtros:
-    - user_id
-    - active=true|false
+    Paginación: ?page=1&page_size=10|20|50 (por defecto 20).
+    Filtros: user_id, active=true|false
     """
 
     permission_classes = [permissions.IsAdminUser]
     serializer_class = AuditEventTableSerializer
+    pagination_class = AuditPageNumberPagination
 
     def get_queryset(self):
-        qs = AuditEvent.objects.select_related("user", "session").order_by("-at")
+        # Más recientes primero: por fecha/hora descendente, luego por id descendente
+        qs = AuditEvent.objects.select_related("user", "session").order_by("-at", "-id")
 
         user_id = self.request.query_params.get("user_id")
         if user_id:

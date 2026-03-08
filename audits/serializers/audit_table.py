@@ -3,6 +3,7 @@ from __future__ import annotations
 from django.utils import timezone
 from rest_framework import serializers
 
+from settings.timezone_utils import PeruDateTimeField
 from ..models import AuditEvent
 
 
@@ -13,7 +14,7 @@ class AuditEventTableSerializer(serializers.ModelSerializer):
     action = serializers.SerializerMethodField()
     ip = serializers.CharField(allow_null=True, required=False)
     detail = serializers.SerializerMethodField()
-    datetime = serializers.DateTimeField(source="at", read_only=True)
+    datetime = PeruDateTimeField(source="at", read_only=True)
     active = serializers.SerializerMethodField()
 
     class Meta:

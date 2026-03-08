@@ -2,6 +2,7 @@ import json
 from django.http import JsonResponse, HttpResponseNotAllowed
 from django.views.decorators.csrf import csrf_exempt
 from django.db import transaction
+from settings.timezone_utils import to_peru_iso
 from ..models.brand import Brand
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.permissions import IsAuthenticated
@@ -34,8 +35,8 @@ def brand_list(request):
                 {"id": b.country_id, "name": b.country.name}
                 if b.country else None
             ),
-            "created_at": b.created_at.isoformat() if b.created_at else None,
-            "updated_at": b.updated_at.isoformat() if b.updated_at else None
+            "created_at": to_peru_iso(b.created_at),
+            "updated_at": to_peru_iso(b.updated_at)
         })
     return JsonResponse({"brands": data})
 
@@ -83,8 +84,8 @@ def brand_create(request):
                     {"id": b.country_id, "name": b.country.name}
                     if b.country else None
                 ),
-                "created_at": b.created_at.isoformat() if b.created_at else None,
-                "updated_at": b.updated_at.isoformat() if b.updated_at else None
+                "created_at": to_peru_iso(b.created_at),
+                "updated_at": to_peru_iso(b.updated_at)
             }
         }
 
@@ -142,7 +143,7 @@ def brand_update(request, pk):
                     {"id": brand.country_id, "name": brand.country.name}
                     if brand.country else None
                 ),
-                "updated_at": brand.updated_at.isoformat() if brand.updated_at else None
+                "updated_at": to_peru_iso(brand.updated_at)
             }
             
             return JsonResponse({
@@ -190,8 +191,8 @@ def brand_detail(request, pk):
                 {"id": brand.country_id, "name": brand.country.name}
                 if brand.country else None
             ),
-            "created_at": brand.created_at.isoformat() if brand.created_at else None,
-            "updated_at": brand.updated_at.isoformat() if brand.updated_at else None
+            "created_at": to_peru_iso(brand.created_at),
+            "updated_at": to_peru_iso(brand.updated_at)
         }
         return JsonResponse(data)
     except Brand.DoesNotExist:

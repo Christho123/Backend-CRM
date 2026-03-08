@@ -4,6 +4,7 @@ from django.http import JsonResponse, HttpResponseNotAllowed
 from django.views.decorators.csrf import csrf_exempt
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
+from settings.timezone_utils import to_peru_iso
 from ..models.product import Product
 from ..serializers.product import ProductSerializer
 from datetime import datetime
@@ -72,8 +73,8 @@ def product_list(request):
                 if p.brand else None
             ),
             "state": p.state,
-            "created_at": p.created_at.isoformat() if p.created_at else None,
-            "updated_at": p.updated_at.isoformat() if p.updated_at else None
+            "created_at": to_peru_iso(p.created_at),
+            "updated_at": to_peru_iso(p.updated_at)
         })
     return JsonResponse({"products": data})
 
@@ -233,8 +234,8 @@ def product_detail(request, pk):
                 if product.brand else None
             ),
             "state": product.state,
-            "created_at": product.created_at.isoformat() if product.created_at else None,
-            "updated_at": product.updated_at.isoformat() if product.updated_at else None
+            "created_at": to_peru_iso(product.created_at),
+            "updated_at": to_peru_iso(product.updated_at)
         }
         return JsonResponse(data)
     except Product.DoesNotExist:
