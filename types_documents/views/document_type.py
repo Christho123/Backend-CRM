@@ -2,15 +2,14 @@ import json
 from django.http import JsonResponse, HttpResponseNotAllowed
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from ..models.document_type import DocumentType
 
 @csrf_exempt
 @api_view(["GET"])
-@authentication_classes([JWTAuthentication, SessionAuthentication, BasicAuthentication])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])  # Público: listar tipos de documento sin JWT (ej. para formulario de registro)
 def document_types_list(request):
     if request.method != "GET":
         return HttpResponseNotAllowed(["GET"])

@@ -3,6 +3,7 @@ from rest_framework.routers import DefaultRouter
 from django.conf import settings
 from django.conf.urls.static import static
 from .views.user import UserDetailView, UserUpdateView, UserProfilePhotoView, UserSearchView, UserProfileView
+from .views.register import PublicRegisterView
 from .views.profile import ProfileDetailView, ProfileCreateView, PublicProfileView, ProfileSettingsView, ProfileCompletionView, ProfileSearchView
 from .views.password import PasswordChangeView, PasswordResetView, PasswordResetConfirmView, PasswordStrengthView, PasswordHistoryView, PasswordPolicyView
 from .views.verification import VerificationCodeView, EmailChangeView, EmailChangeConfirmView, VerificationCodeResendView, VerificationStatusView, EmailVerificationView, EmailVerificationConfirmView
@@ -12,6 +13,8 @@ router = DefaultRouter()
 
 # User URLs
 urlpatterns = [
+    # Registro público (AllowAny): email, user_name, document_number, password (como createsuperuser)
+    path('register/', PublicRegisterView.as_view(), name='public-register'),
     # User management
     path('user/me/', UserDetailView.as_view(), name='user-detail'),
     path('user/me/update/', UserUpdateView.as_view(), name='user-update'),

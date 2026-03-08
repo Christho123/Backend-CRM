@@ -3,6 +3,8 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
 import os
 
+from types_documents.models.document_type import DocumentType
+
 User = get_user_model()
 
 class UserSerializer(serializers.ModelSerializer):
@@ -116,6 +118,64 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         validated_data.pop('password_confirm')  # Remover confirmación
         user = User.objects.create_user(**validated_data)
         return user
+
+
+class PublicRegisterSerializer(serializers.ModelSerializer):
+    """Registro público: email, user_name, document_number, document_type, password.
+
+    Incluye tipo de documento (FK a document_types). API pública (AllowAny).
+    """
+    password = serializers.CharField(
+        write_only=True,
+        required=True,
+        validators=[validate_password],
+        help_text='Requisitos de seguridad de Django (longitud, no común, etc.)',
+    )
+    password_confirm = serializers.CharField(write_only=True, required=True)
+    document_type = serializers.PrimaryKeyRelatedField(
+        queryset=DocumentType.objects.all(),
+        required=True,
+        help_text='ID del tipo de documento (ej: DNI, CE, Pasaporte).',
+    )
+
+    class Meta:
+        model = User
+        fields = ['email', 'user_name', 'document_number', 'document_type', 'password', 'password_confirm']
+
+    def validate_email(self, value):
+        if not value:
+            raise serializers.ValidationError('El correo electrónico es obligatorio.')
+        if User.objects.filter(email=value).exists():
+            raise serializers.ValidationError('Este correo electrónico ya está registrado.')
+        return value
+
+    def validate_user_name(self, value):
+        if not value:
+            raise serializers.ValidationError('El nombre de usuario es obligatorio.')
+        if User.objects.filter(user_name=value).exists():
+            raise serializers.ValidationError('Este nombre de usuario ya está en uso.')
+        return value
+
+    def validate_document_number(self, value):
+        if not value:
+            raise serializers.ValidationError('El número de documento es obligatorio.')
+        if User.objects.filter(document_number=value).exists():
+            raise serializers.ValidationError('Este número de documento ya está registrado.')
+        return value
+
+    def validate(self, attrs):
+        if attrs['password'] != attrs['password_confirm']:
+            raise serializers.ValidationError({'password_confirm': 'Las contraseñas no coinciden.'})
+        return attrs
+
+    def create(self, validated_data):
+        validated_data.pop('password_confirm')
+        password = validated_data.pop('password')
+        user = User.objects.create_user(password=password, **validated_data)
+        user.is_active = True
+        user.save(update_fields=['is_active'])
+        return user
+
 
 class UserProfilePhotoSerializer(serializers.ModelSerializer):
     """Serializer para actualización de la foto de perfil del usuario.
