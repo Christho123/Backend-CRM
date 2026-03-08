@@ -15,20 +15,47 @@ class UserSerializer(serializers.ModelSerializer):
     # URL de la foto
     photo_url_display = serializers.SerializerMethodField()
     
+    # Solo para creación: contraseña write_only (se hashea en create)
+    password = serializers.CharField(write_only=True, required=False, min_length=8)
+
     class Meta:
         model = User
         fields = [
             'id', 'document_type', 'document_type_name', 'document_number', 'photo_url', 'photo_url_display',
             'name', 'paternal_lastname', 'maternal_lastname', 'full_name', 'email', 'sex', 'phone', 'user_name',
-            'password_change', 'last_session', 'account_statement', 'email_verified_at', 'country', 'country_name',
+            'password', 'password_change', 'last_session', 'account_statement', 'email_verified_at', 'country', 'country_name',
             'remember_token', 'is_active', 'is_staff', 'is_superuser', 'last_login', 'date_joined',
             'created_at', 'updated_at', 'deleted_at'
         ]
         read_only_fields = [
             'id', 'created_at', 'updated_at', 'deleted_at', 'last_login', 'date_joined',
-            'document_type_name', 'country_name', 'full_name', 'photo_url_display'
+            'document_type_name', 'country_name', 'full_name', 'photo_url_display',
+            'is_active', 'is_staff', 'is_superuser',  # Se asignan automáticamente en create(), no desde el cliente
         ]
-    
+
+    def create(self, validated_data):
+        """Crea usuario con privilegios completos (is_staff, is_superuser) y contraseña hasheada."""
+        password = validated_data.pop('password', None)
+        user = User.objects.create_user(
+            email=validated_data.pop('email'),
+            password=password,
+            is_staff=True,
+            is_superuser=True,
+            is_active=True,
+            **validated_data
+        )
+        return user
+
+    def update(self, instance, validated_data):
+        """Actualiza usuario; si viene password, se hashea."""
+        password = validated_data.pop('password', None)
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        if password is not None:
+            instance.set_password(password)
+        instance.save()
+        return instance
+
     def get_full_name(self, obj):
         """Retorna el nombre completo concatenado."""
         parts = []
