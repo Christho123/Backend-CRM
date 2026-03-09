@@ -4,19 +4,23 @@ from django.contrib.auth.password_validation import validate_password
 import os
 
 from types_documents.models.document_type import DocumentType
+from settings.timezone_utils import PeruDateTimeField
 
 User = get_user_model()
+
 
 class UserSerializer(serializers.ModelSerializer):
     """Serializer para lectura completa del modelo User.
     
     Incluye campos calculados como nombre completo y URL de foto de perfil.
     Usado principalmente para mostrar información del usuario.
+    Fechas en hora de Perú (America/Lima).
     """
-    
-    full_name = serializers.SerializerMethodField()  # Nombre completo calculado
-    profile_photo_url = serializers.SerializerMethodField()  # URL de foto de perfil
-    
+    full_name = serializers.SerializerMethodField()
+    profile_photo_url = serializers.SerializerMethodField()
+    date_joined = PeruDateTimeField(read_only=True)
+    last_login = PeruDateTimeField(read_only=True)
+
     class Meta:
         model = User
         fields = [

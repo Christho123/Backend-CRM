@@ -7,6 +7,7 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from settings.timezone_utils import to_peru_iso
 from ..services import AnalyticsService
 
 
@@ -86,8 +87,8 @@ class ClicksTimeSeriesView(BaseTimeSeriesView):
 
         payload = {
             "granularity": result.granularity,
-            "start": result.start.isoformat(),
-            "end": result.end.isoformat(),
+            "start": to_peru_iso(result.start),
+            "end": to_peru_iso(result.end),
             "scope": scope,
             "results": result.points,
         }
@@ -115,8 +116,8 @@ class NewEmployeesTimeSeriesView(BaseTimeSeriesView):
 
         payload = {
             "granularity": result.granularity,
-            "start": result.start.isoformat(),
-            "end": result.end.isoformat(),
+            "start": to_peru_iso(result.start),
+            "end": to_peru_iso(result.end),
             "results": result.points,
         }
         return Response(payload)
@@ -143,8 +144,8 @@ class NewUsersTimeSeriesView(BaseTimeSeriesView):
 
         payload = {
             "granularity": result.granularity,
-            "start": result.start.isoformat(),
-            "end": result.end.isoformat(),
+            "start": to_peru_iso(result.start),
+            "end": to_peru_iso(result.end),
             "results": result.points,
         }
         return Response(payload)

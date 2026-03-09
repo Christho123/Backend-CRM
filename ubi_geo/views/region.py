@@ -6,8 +6,9 @@ from ubi_geo.serializers.region import RegionSerializer
 
 class RegionViewSet(ReadOnlyModelViewSet):
     """
-    GET /api/regions/           -> lista todas las regiones
+    GET /api/regions/           -> lista todas las regiones (sin paginación)
     GET /api/regions/{id}/      -> detalle de una región
     """
     queryset = Region.objects.filter(deleted_at__isnull=True).order_by("name")
     serializer_class = RegionSerializer
+    pagination_class = None

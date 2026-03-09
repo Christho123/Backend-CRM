@@ -447,7 +447,7 @@ Autenticación: Requerida.
 
 | Método   | Endpoint                                      | Descripción                  |
 |----------|-----------------------------------------------|------------------------------|
-| GET      | `/api/employees/employee/`                   | Listar empleados             |
+| GET      | `/api/employees/employee/`                   | Listar empleados (opcional: `?search=texto` para buscar por nombre, apellidos, email, teléfono, documento, dirección, región, provincia, distrito, rol) |
 | POST     | `/api/employees/employee/create/`            | Crear empleado               |
 | GET      | `/api/employees/employee/{id}/`              | Ver empleado                 |
 | PUT/PATCH| `/api/employees/employee/{id}/edit/`         | Actualizar empleado          |
@@ -621,16 +621,73 @@ http://127.0.0.1:8000/api/audits/
 
 | Método | Endpoint                          | Descripción                                     |
 |--------|-----------------------------------|-------------------------------------------------|
-| GET    | `/sessions/`                      | Tabla de acciones (movimientos)                |
-| GET    | `/events/`                        | Alias de `sessions/`                           |
+| GET    | `/sessions/`                      | Tabla de acciones (movimientos), **paginado**  |
+| GET    | `/events/`                        | Alias de `sessions/` (misma paginación)        |
 | GET    | `/users/{user_id}/`               | Detalle de usuario + eventos y sesiones        |
 
-**Ejemplo – Listar eventos auditados:**
+**Paginación (solo para `sessions/` y `events/`):**
+
+- `page` – Número de página (por defecto `1`).
+- `page_size` – Cantidad por página: **10**, **20** o **50** (por defecto `20`). Cualquier otro valor se ignora y se usa 20.
+
+**Filtros opcionales:** `user_id`, `active=true|false`
+
+**Ejemplo – Listar eventos auditados (paginado):**
 
 ```http
-GET http://127.0.0.1:8000/api/audits/sessions/?user_id=1&active=true
+GET http://127.0.0.1:8000/api/audits/sessions/?page=1&page_size=20
 Authorization: Bearer ACCESS_TOKEN_JWT
 ```
+
+Con filtros:
+
+```http
+GET http://127.0.0.1:8000/api/audits/sessions/?page=1&page_size=10&user_id=1&active=true
+Authorization: Bearer ACCESS_TOKEN_JWT
+```
+
+**Respuesta (para que el frontend pueda consumirla):**
+
+```json
+{
+  "count": 45,
+  "next": "http://127.0.0.1:8000/api/audits/sessions/?page=2&page_size=20",
+  "previous": null,
+  "results": [
+    {
+      "id": 101,
+      "user_id": 1,
+      "full_name": "Christhoper Sosa Morales",
+      "email": "admin@example.com",
+      "action": "LOGIN",
+      "ip": "127.0.0.1",
+      "detail": null,
+      "datetime": "2026-03-08T12:30:00Z",
+      "active": true
+    },
+    {
+      "id": 100,
+      "user_id": 1,
+      "full_name": "Christhoper Sosa Morales",
+      "email": "admin@example.com",
+      "action": "REGISTRAR_EMPLEADO",
+      "ip": "127.0.0.1",
+      "detail": { "request_body": { "email": "juan@example.com", "name": "Juan" } },
+      "datetime": "2026-03-08T11:00:00Z",
+      "active": true
+    }
+  ]
+}
+```
+
+**Campos que recibe el frontend:**
+
+| Campo      | Tipo   | Descripción                                                                 |
+|------------|--------|-----------------------------------------------------------------------------|
+| `count`    | number | Total de registros (todas las páginas). Útil para “Mostrando X de Y” o paginador. |
+| `next`     | string \| null | URL de la siguiente página, o `null` si no hay más.                         |
+| `previous` | string \| null | URL de la página anterior, o `null` si es la primera.                       |
+| `results`  | array  | Lista de eventos de la página actual. Cada item tiene `id`, `user_id`, `full_name`, `email`, `action`, `ip`, `detail`, `datetime`, `active`. |
 
 ---
 

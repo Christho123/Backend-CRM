@@ -5,6 +5,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import get_user_model
+from settings.timezone_utils import to_peru_iso
 from ..serializers.user import UserSerializer
 
 User = get_user_model()
@@ -226,7 +227,7 @@ class UserPhotoUploadView(APIView):
                 'user_name': user.user_name,
                 'email': user.email,
                 'photo_url': user.photo_url.url if user.photo_url else None,
-                'uploaded_at': user.updated_at.isoformat()
+                'uploaded_at': to_peru_iso(user.updated_at)
             }, status=status.HTTP_201_CREATED)
             
         except User.DoesNotExist:
@@ -275,7 +276,7 @@ class UserPhotoUploadView(APIView):
                 'user_name': user.user_name,
                 'email': user.email,
                 'photo_url': user.photo_url.url if user.photo_url else None,
-                'updated_at': user.updated_at.isoformat()
+                'updated_at': to_peru_iso(user.updated_at)
             }, status=status.HTTP_200_OK)
             
         except User.DoesNotExist:
@@ -315,7 +316,7 @@ class UserPhotoUploadView(APIView):
                 'user_name': user.user_name,
                 'email': user.email,
                 'photo_url': None,
-                'deleted_at': user.updated_at.isoformat()
+                'deleted_at': to_peru_iso(user.updated_at)
             }, status=status.HTTP_200_OK)
             
         except User.DoesNotExist:

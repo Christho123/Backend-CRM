@@ -6,6 +6,7 @@ from rest_framework.views import APIView
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import update_last_login
 from django.utils import timezone
+from settings.timezone_utils import to_peru_iso
 
 # Importaciones locales
 from ..serializers.password import (
@@ -164,7 +165,7 @@ class PasswordHistoryView(APIView):
         
         return Response({
             'message': 'Historial de cambios de contraseña',
-            'last_changed': request.user.last_login,
+            'last_changed': to_peru_iso(request.user.last_login),
             'total_changes': 1  # Placeholder
         })
 class PasswordPolicyView(APIView):

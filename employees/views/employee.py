@@ -1,6 +1,8 @@
 import json
 import os
+from django.db.models import Q
 from django.http import JsonResponse, HttpResponseNotAllowed
+from settings.timezone_utils import to_peru_iso
 from django.views.decorators.csrf import csrf_exempt
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
@@ -74,6 +76,25 @@ def employee_list(request):
         return HttpResponseNotAllowed(["GET"])
     
     qs = Employees.objects.select_related("document_type", "rol", "region", "province", "district")
+    
+    # Búsqueda por cualquier dato: nombre, apellidos, email, teléfono, documento, dirección, ubicación
+    search = request.GET.get("search", "").strip()
+    if search:
+        qs = qs.filter(
+            Q(name__icontains=search)
+            | Q(last_name_paternal__icontains=search)
+            | Q(last_name_maternal__icontains=search)
+            | Q(email__icontains=search)
+            | Q(phone__icontains=search)
+            | Q(document_number__icontains=search)
+            | Q(address__icontains=search)
+            | Q(region__name__icontains=search)
+            | Q(province__name__icontains=search)
+            | Q(district__name__icontains=search)
+            | Q(document_type__name__icontains=search)
+            | Q(rol__name__icontains=search)
+        )
+    
     data = []
     for e in qs:
         data.append({
@@ -110,8 +131,8 @@ def employee_list(request):
             "salary": e.salary,
             "address": e.address,
             "photo_url": e.get_photo_url(),
-            "created_at": e.created_at.isoformat() if e.created_at else None,
-            "updated_at": e.updated_at.isoformat() if e.updated_at else None
+            "created_at": to_peru_iso(e.created_at),
+            "updated_at": to_peru_iso(e.updated_at)
         })
     return JsonResponse({"employees": data})
 
@@ -150,10 +171,10 @@ def employee_create(request):
             'gender': payload.get('gender'),
             'phone': payload.get('phone'),
             'birth_date': birth_date,
-            'region_id': payload.get('region'),
-            'province_id': payload.get('province'),
-            'district_id': payload.get('district'),
-            'rol_id': payload.get('rol'),
+            'region_id': payload.get('region_id') or payload.get('region'),
+            'province_id': payload.get('province_id') or payload.get('province'),
+            'district_id': payload.get('district_id') or payload.get('district'),
+            'rol_id': payload.get('rol_id') or payload.get('rol'),
             'salary': payload.get('salary'),
             'address': payload.get('address'),
         }
@@ -324,8 +345,8 @@ def employee_detail(request, pk):
             "salary": employee.salary,
             "address": employee.address,
             "photo_url": employee.get_photo_url(),
-            "created_at": employee.created_at.isoformat() if employee.created_at else None,
-            "updated_at": employee.updated_at.isoformat() if employee.updated_at else None
+            "created_at": to_peru_iso(employee.created_at),
+            "updated_at": to_peru_iso(employee.updated_at)
         }
         return JsonResponse(data)
     except Employees.DoesNotExist:
@@ -392,12 +413,11 @@ def employee_photo_update(request, pk):
     except Employees.DoesNotExist:
         return JsonResponse({"error": "Empleado no encontrado"}, status=404)
     
-    # Para PUT, redirigir a la función de upload que ya funciona
-    # Cambiar el método a POST temporalmente para que Django parsee los archivos
-    request.method = 'POST'
-    
-    # Llamar a la función de upload que ya funciona
-    return employee_photo_upload(request, pk)
+    # Pasar el HttpRequest subyacente (employee_photo_upload está decorado con @api_view y espera HttpRequest)
+    # y marcar como POST para que Django parsee multipart/form-data
+    django_request = request._request
+    django_request.method = "POST"
+    return employee_photo_upload(django_request, pk)
 
 
 @csrf_exempt
