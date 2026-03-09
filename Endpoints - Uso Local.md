@@ -238,13 +238,36 @@ Authorization: Bearer ACCESS_TOKEN_JWT
 
 **Roles (`/api/architect/roles/`):**
 
-| Método | Endpoint                                   | Descripción        |
-|--------|--------------------------------------------|--------------------|
-| GET    | `/api/architect/roles/`                   | Listar roles       |
-| POST   | `/api/architect/roles/`                   | Crear rol          |
-| GET    | `/api/architect/roles/{id}/`              | Ver rol            |
-| PUT    | `/api/architect/roles/{id}/`              | Actualizar rol     |
-| DELETE | `/api/architect/roles/{id}/`              | Eliminar rol       |
+Paginación (GET lista): `page`, `page_size` (10, 20 o 50, por defecto 20).
+
+| Método | Endpoint                                   | Descripción              |
+|--------|--------------------------------------------|--------------------------|
+| GET    | `architect/roles/`                   | Listar roles (paginado)  |
+| POST   | `architect/roles/`                   | Crear rol                |
+| GET    | `architect/roles/{id}/`              | Ver rol                  |
+| PUT    | `architect/roles/{id}/`              | Actualizar rol           |
+| DELETE | `architect/roles/{id}/`              | Eliminar rol             |
+
+**Ejemplo – Listar roles (paginado):**
+
+```http
+GET http://127.0.0.1:8000/api/architect/roles/?page=1&page_size=20
+Authorization: Bearer ACCESS_TOKEN_JWT
+```
+
+**Respuesta:**
+
+```json
+{
+  "count": 5,
+  "next": null,
+  "previous": null,
+  "roles": [
+    { "id": 1, "name": "Administrador", "guard_name": "admin" },
+    { "id": 2, "name": "Vendedor", "guard_name": "admin" }
+  ]
+}
+```
 
 **Ejemplo – Crear rol (POST):**
 
@@ -445,9 +468,13 @@ http://127.0.0.1:8000/api/employees/
 
 Autenticación: Requerida.
 
+**Paginación (GET lista):** El endpoint de listar empleados soporta paginación:
+- `page` – Número de página (por defecto `1`).
+- `page_size` – Cantidad por página: **10**, **20** o **50** (por defecto `20`).
+
 | Método   | Endpoint                                      | Descripción                  |
 |----------|-----------------------------------------------|------------------------------|
-| GET      | `/api/employees/employee/`                   | Listar empleados (opcional: `?search=texto` para buscar por nombre, apellidos, email, teléfono, documento, dirección, región, provincia, distrito, rol) |
+| GET      | `/api/employees/employee/`                   | Listar empleados (paginado). Opcional: `?search=texto` para buscar por nombre, apellidos, email, teléfono, documento, dirección, región, provincia, distrito, rol |
 | POST     | `/api/employees/employee/create/`            | Crear empleado               |
 | GET      | `/api/employees/employee/{id}/`              | Ver empleado                 |
 | PUT/PATCH| `/api/employees/employee/{id}/edit/`         | Actualizar empleado          |
@@ -455,6 +482,54 @@ Autenticación: Requerida.
 | POST     | `/api/employees/employee/{id}/photo/`        | Subir foto de empleado       |
 | PUT      | `/api/employees/employee/{id}/photo/edit/`   | Actualizar foto              |
 | DELETE   | `/api/employees/employee/{id}/photo/delete/` | Eliminar foto                |
+
+**Ejemplo – Listar empleados (paginado):**
+
+```http
+GET http://127.0.0.1:8000/api/employees/employee/?page=1&page_size=20
+Authorization: Bearer ACCESS_TOKEN_JWT
+```
+
+Con búsqueda:
+
+```http
+GET http://127.0.0.1:8000/api/employees/employee/?page=1&page_size=10&search=Juan
+Authorization: Bearer ACCESS_TOKEN_JWT
+```
+
+**Respuesta:**
+
+```json
+{
+  "count": 45,
+  "next": "http://127.0.0.1:8000/api/employees/employee/?page=2&page_size=20",
+  "previous": null,
+  "employees": [
+    {
+      "id": 1,
+      "name": "Juan",
+      "last_name_paternal": "Pérez",
+      "last_name_maternal": "García",
+      "full_name": "Juan Pérez García",
+      "document_type": { "id": 1, "name": "DNI" },
+      "document_number": "12345678",
+      "email": "juan.perez@example.com",
+      "gender": "M",
+      "phone": "+51999999999",
+      "birth_date": "1990-01-01",
+      "region": { "id": 1, "name": "Lima" },
+      "province": { "id": 10, "name": "Lima" },
+      "district": { "id": 100, "name": "Miraflores" },
+      "rol": { "id": 2, "name": "Vendedor" },
+      "salary": 2500.0,
+      "address": "Av. Siempre Viva 742",
+      "photo_url": "http://127.0.0.1:8000/media/employees/foto.jpg",
+      "created_at": "2025-03-01T10:00:00-05:00",
+      "updated_at": "2025-03-01T10:00:00-05:00"
+    }
+  ]
+}
+```
 
 **Ejemplo – Crear empleado (POST `/employee/create/`):**
 
@@ -484,6 +559,13 @@ Autenticación: Requerida.
 
 Todos requieren autenticación.
 
+**Paginación (GET listas):** Todos los endpoints GET que listan colecciones soportan paginación:
+
+- `page` – Número de página (por defecto `1`).
+- `page_size` – Cantidad por página: **10**, **20** o **50** (por defecto `20`).
+
+Respuesta paginada: `count`, `next`, `previous` y la colección correspondiente (`products`, `brands`, `suppliers`, `category`).
+
 ### 8.1. Categorías (`category`)
 
 Base:
@@ -494,11 +576,32 @@ http://127.0.0.1:8000/api/products_configurations/category/
 
 | Método | Endpoint                           | Descripción          |
 |--------|------------------------------------|----------------------|
-| GET    | `/category/`                       | Listar categorías    |
+| GET    | `/category/`                       | Listar categorías (paginado) |
 | POST   | `/category/create/`                | Crear categoría      |
 | GET    | `/category/{id}/`                  | Ver categoría        |
 | PUT    | `/category/{id}/edit/`             | Actualizar categoría |
 | DELETE | `/category/{id}/delete/`           | Eliminar categoría   |
+
+**Ejemplo – Listar categorías (paginado):**
+
+```http
+GET http://127.0.0.1:8000/api/products_configurations/category/?page=1&page_size=20
+Authorization: Bearer ACCESS_TOKEN_JWT
+```
+
+**Respuesta:**
+
+```json
+{
+  "count": 15,
+  "next": null,
+  "previous": null,
+  "category": [
+    { "id": 1, "name": "Celulares", "description": "Equipos móviles", "created_at": "...", "updated_at": "..." },
+    { "id": 2, "name": "Laptops", "description": "Computadoras portátiles", "created_at": "...", "updated_at": "..." }
+  ]
+}
+```
 
 **Ejemplo – Crear categoría:**
 
@@ -519,11 +622,46 @@ http://127.0.0.1:8000/api/products_configurations/supplier/
 
 | Método | Endpoint                          | Descripción                |
 |--------|-----------------------------------|----------------------------|
-| GET    | `/supplier/`                      | Listar proveedores         |
+| GET    | `/supplier/`                      | Listar proveedores (paginado) |
 | POST   | `/supplier/create/`               | Crear proveedor            |
 | GET    | `/supplier/{id}/`                 | Ver proveedor              |
 | PUT    | `/supplier/{id}/edit/`            | Actualizar proveedor       |
 | DELETE | `/supplier/{id}/delete/`          | Eliminar proveedor         |
+
+**Ejemplo – Listar proveedores (paginado):**
+
+```http
+GET http://127.0.0.1:8000/api/products_configurations/supplier/?page=2&page_size=10
+Authorization: Bearer ACCESS_TOKEN_JWT
+```
+
+**Respuesta:**
+
+```json
+{
+  "count": 45,
+  "next": "http://127.0.0.1:8000/api/products_configurations/supplier/?page=3&page_size=10",
+  "previous": "http://127.0.0.1:8000/api/products_configurations/supplier/?page=1&page_size=10",
+  "suppliers": [
+    {
+      "id": 11,
+      "ruc": "20123456789",
+      "company_name": "Proveedor SAC",
+      "business_name": "Proveedor Comercial",
+      "representative": "Carlos Ramírez",
+      "phone": "+51987654321",
+      "email": "contacto@proveedor.com",
+      "address": "Av. Principal 123",
+      "account_number": "001-123456789",
+      "region": { "id": 1, "name": "Lima" },
+      "province": { "id": 10, "name": "Lima" },
+      "district": { "id": 100, "name": "Miraflores" },
+      "created_at": "2025-03-01T10:00:00-05:00",
+      "updated_at": "2025-03-01T10:00:00-05:00"
+    }
+  ]
+}
+```
 
 **Ejemplo – Crear proveedor:**
 
@@ -553,11 +691,38 @@ http://127.0.0.1:8000/api/products_configurations/brand/
 
 | Método | Endpoint                        | Descripción              |
 |--------|---------------------------------|--------------------------|
-| GET    | `/brand/`                       | Listar marcas            |
+| GET    | `/brand/`                       | Listar marcas (paginado) |
 | POST   | `/brand/create/`                | Crear marca              |
 | GET    | `/brand/{id}/`                  | Ver marca                |
 | PUT    | `/brand/{id}/edit/`             | Actualizar marca         |
 | DELETE | `/brand/{id}/delete/`           | Eliminar marca           |
+
+**Ejemplo – Listar marcas (paginado):**
+
+```http
+GET http://127.0.0.1:8000/api/products_configurations/brand/?page=1&page_size=20
+Authorization: Bearer ACCESS_TOKEN_JWT
+```
+
+**Respuesta:**
+
+```json
+{
+  "count": 8,
+  "next": null,
+  "previous": null,
+  "brands": [
+    {
+      "id": 1,
+      "name": "Samsung",
+      "description": "Marca de equipos móviles",
+      "country": { "id": 1, "name": "Perú" },
+      "created_at": "2025-03-01T10:00:00-05:00",
+      "updated_at": "2025-03-01T10:00:00-05:00"
+    }
+  ]
+}
+```
 
 **Ejemplo – Crear marca:**
 
@@ -579,14 +744,57 @@ http://127.0.0.1:8000/api/products_configurations/product/
 
 | Método   | Endpoint                              | Descripción                 |
 |----------|---------------------------------------|-----------------------------|
-| GET      | `/product/`                           | Listar productos            |
+| GET      | `/product/`                           | Listar productos (paginado) |
 | POST     | `/product/create/`                    | Crear producto              |
-| GET      | `/product/{id}/`                      | Ver producto                |
-| PUT/PATCH| `/product/{id}/edit/`                 | Actualizar producto         |
-| DELETE   | `/product/{id}/delete/`               | Eliminar producto           |
-| POST     | `/product/{id}/photo/`                | Subir foto de producto      |
-| PUT      | `/product/{id}/photo/edit/`           | Actualizar foto             |
-| DELETE   | `/product/{id}/photo/delete/`         | Eliminar foto               |
+| GET      | `products_configurations/product/{id}/`                      | Ver producto                |
+| PUT| `products_configurations/product/{id}/edit/`                 | Actualizar producto         |
+| DELETE   | `products_configurations/product/{id}/delete/`               | Eliminar producto           |
+| POST     | `products_configurations/product/{id}/photo/`                | Subir foto de producto      |
+| PUT      | `products_configurations/product/{id}/photo/edit/`           | Actualizar foto             |
+| DELETE   | `products_configurations/product/{id}/photo/delete/`         | Eliminar foto               |
+
+**Ejemplo – Listar productos (paginado):**
+
+```http
+GET http://127.0.0.1:8000/api/products_configurations/product/?page=1&page_size=20
+Authorization: Bearer ACCESS_TOKEN_JWT
+```
+
+Con tamaño personalizado (10, 20 o 50):
+
+```http
+GET http://127.0.0.1:8000/api/products_configurations/product/?page=1&page_size=50
+Authorization: Bearer ACCESS_TOKEN_JWT
+```
+
+**Respuesta:**
+
+```json
+{
+  "count": 120,
+  "next": "http://127.0.0.1:8000/api/products_configurations/product/?page=2&page_size=20",
+  "previous": null,
+  "products": [
+    {
+      "id": 1,
+      "name": "iPhone 15",
+      "description": "Smartphone de alta gama",
+      "model": "A3100",
+      "unit_price": 3500.0,
+      "sales_price": 4200.0,
+      "stock": 10,
+      "discount": 0,
+      "photo_url": "http://127.0.0.1:8000/media/products/iphone15.png",
+      "category": { "id": 1, "name": "Celulares" },
+      "supplier": { "id": 1, "name": "Apple Inc" },
+      "brand": { "id": 1, "name": "Apple" },
+      "state": "ACTIVE",
+      "created_at": "2025-03-01T10:00:00-05:00",
+      "updated_at": "2025-03-01T10:00:00-05:00"
+    }
+  ]
+}
+```
 
 **Ejemplo – Crear producto:**
 

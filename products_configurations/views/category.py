@@ -8,6 +8,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from ..serializers.category import CategorySerializer
 from ..services import category_service as service
+from ..pagination import ProductsConfigPageNumberPagination, get_paginated_dict
 
 
 def _json_body(request):
@@ -18,13 +19,18 @@ def _json_body(request):
 
 
 @csrf_exempt
-@api_view(["GET"]) 
+@api_view(["GET"])
 @authentication_classes([JWTAuthentication, SessionAuthentication, BasicAuthentication])
 @permission_classes([IsAuthenticated])
 def category_list(request):
-    items = service.list_active()
-    data = CategorySerializer(items, many=True).data
-    return JsonResponse({"category": data})
+    qs = service.list_active()
+    paginator = ProductsConfigPageNumberPagination()
+    page = paginator.paginate_queryset(qs, request)
+    if page is None:
+        return JsonResponse({"category": [], "count": 0, "next": None, "previous": None})
+
+    data = CategorySerializer(page, many=True).data
+    return JsonResponse(get_paginated_dict(paginator, data, "category"))
 
 
 @csrf_exempt

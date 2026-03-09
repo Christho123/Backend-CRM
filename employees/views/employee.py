@@ -8,6 +8,7 @@ from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 from ..models.employee import Employees
 from ..serializers.employee import EmployeeSerializer
+from ..pagination import EmployeePageNumberPagination, get_paginated_dict
 from datetime import datetime
 from rest_framework import viewsets, filters, status
 from rest_framework.response import Response
@@ -68,15 +69,15 @@ class EmployeeViewSet(viewsets.ModelViewSet):
         return qs
 
 @csrf_exempt
-@api_view(["GET"]) 
+@api_view(["GET"])
 @authentication_classes([JWTAuthentication, SessionAuthentication, BasicAuthentication])
 @permission_classes([IsAuthenticated])
 def employee_list(request):
     if request.method != "GET":
         return HttpResponseNotAllowed(["GET"])
-    
+
     qs = Employees.objects.select_related("document_type", "rol", "region", "province", "district").order_by("-created_at")
-    
+
     # Búsqueda por cualquier dato: nombre, apellidos, email, teléfono, documento, dirección, ubicación
     search = request.GET.get("search", "").strip()
     if search:
@@ -94,9 +95,14 @@ def employee_list(request):
             | Q(document_type__name__icontains=search)
             | Q(rol__name__icontains=search)
         )
-    
+
+    paginator = EmployeePageNumberPagination()
+    page = paginator.paginate_queryset(qs, request)
+    if page is None:
+        return JsonResponse({"employees": [], "count": 0, "next": None, "previous": None})
+
     data = []
-    for e in qs:
+    for e in page:
         data.append({
             "id": e.id,
             "name": e.name,
@@ -134,7 +140,7 @@ def employee_list(request):
             "created_at": to_peru_iso(e.created_at),
             "updated_at": to_peru_iso(e.updated_at)
         })
-    return JsonResponse({"employees": data})
+    return JsonResponse(get_paginated_dict(paginator, data, "employees"))
 
 
 @csrf_exempt

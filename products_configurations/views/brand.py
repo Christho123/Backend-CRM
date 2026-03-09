@@ -4,6 +4,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.db import transaction
 from settings.timezone_utils import to_peru_iso
 from ..models.brand import Brand
+from ..pagination import ProductsConfigPageNumberPagination, get_paginated_dict
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
@@ -17,7 +18,7 @@ def _json_body(request):
         return {}
 
 @csrf_exempt
-@api_view(["GET"]) 
+@api_view(["GET"])
 @authentication_classes([JWTAuthentication, SessionAuthentication, BasicAuthentication])
 @permission_classes([IsAuthenticated])
 def brand_list(request):
@@ -25,8 +26,13 @@ def brand_list(request):
         return HttpResponseNotAllowed(["GET"])
 
     qs = Brand.objects.select_related("country").order_by("-created_at")
+    paginator = ProductsConfigPageNumberPagination()
+    page = paginator.paginate_queryset(qs, request)
+    if page is None:
+        return JsonResponse({"brands": [], "count": 0, "next": None, "previous": None})
+
     data = []
-    for b in qs:
+    for b in page:
         data.append({
             "id": b.id,
             "name": b.name,
@@ -38,7 +44,7 @@ def brand_list(request):
             "created_at": to_peru_iso(b.created_at),
             "updated_at": to_peru_iso(b.updated_at)
         })
-    return JsonResponse({"brands": data})
+    return JsonResponse(get_paginated_dict(paginator, data, "brands"))
 
 @csrf_exempt
 @api_view(["POST"]) 

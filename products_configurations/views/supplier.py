@@ -6,6 +6,7 @@ from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 from settings.timezone_utils import to_peru_iso
 from ..models.supplier import Supplier
+from ..pagination import ProductsConfigPageNumberPagination, get_paginated_dict
 from datetime import datetime
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.permissions import IsAuthenticated
@@ -20,16 +21,21 @@ def _json_body(request):
         return {}
 
 @csrf_exempt
-@api_view(["GET"]) 
+@api_view(["GET"])
 @authentication_classes([JWTAuthentication, SessionAuthentication, BasicAuthentication])
 @permission_classes([IsAuthenticated])
 def supplier_list(request):
     if request.method != "GET":
         return HttpResponseNotAllowed(["GET"])
-    
+
     qs = Supplier.objects.select_related("region", "province", "district").order_by("-created_at")
+    paginator = ProductsConfigPageNumberPagination()
+    page = paginator.paginate_queryset(qs, request)
+    if page is None:
+        return JsonResponse({"suppliers": [], "count": 0, "next": None, "previous": None})
+
     data = []
-    for s in qs:
+    for s in page:
         data.append({
             "id": s.id,
             "ruc": s.ruc,
@@ -55,7 +61,7 @@ def supplier_list(request):
             "created_at": to_peru_iso(s.created_at),
             "updated_at": to_peru_iso(s.updated_at)
         })
-    return JsonResponse({"suppliers": data})
+    return JsonResponse(get_paginated_dict(paginator, data, "suppliers"))
 
 
 @csrf_exempt

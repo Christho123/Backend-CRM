@@ -7,6 +7,7 @@ from django.core.files.base import ContentFile
 from settings.timezone_utils import to_peru_iso
 from ..models.product import Product
 from ..serializers.product import ProductSerializer
+from ..pagination import ProductsConfigPageNumberPagination, get_paginated_dict
 from datetime import datetime
 from rest_framework import viewsets, filters, status
 from rest_framework.response import Response
@@ -40,16 +41,21 @@ class ProductViewSet(viewsets.ModelViewSet):
     ]
 
 @csrf_exempt
-@api_view(["GET"]) 
+@api_view(["GET"])
 @authentication_classes([JWTAuthentication, SessionAuthentication, BasicAuthentication])
 @permission_classes([IsAuthenticated])
 def product_list(request):
     if request.method != "GET":
         return HttpResponseNotAllowed(["GET"])
-    
+
     qs = Product.objects.select_related("category", "supplier", "brand").order_by("-created_at")
+    paginator = ProductsConfigPageNumberPagination()
+    page = paginator.paginate_queryset(qs, request)
+    if page is None:
+        return JsonResponse({"products": [], "count": 0, "next": None, "previous": None})
+
     data = []
-    for p in qs:
+    for p in page:
         data.append({
             "id": p.id,
             "name": p.name,
@@ -76,7 +82,7 @@ def product_list(request):
             "created_at": to_peru_iso(p.created_at),
             "updated_at": to_peru_iso(p.updated_at)
         })
-    return JsonResponse({"products": data})
+    return JsonResponse(get_paginated_dict(paginator, data, "products"))
 
 
 @csrf_exempt
