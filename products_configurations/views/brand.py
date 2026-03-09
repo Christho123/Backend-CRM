@@ -24,7 +24,7 @@ def brand_list(request):
     if request.method != "GET":
         return HttpResponseNotAllowed(["GET"])
 
-    qs = Brand.objects.select_related("country")
+    qs = Brand.objects.select_related("country").order_by("-created_at")
     data = []
     for b in qs:
         data.append({

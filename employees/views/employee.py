@@ -75,7 +75,7 @@ def employee_list(request):
     if request.method != "GET":
         return HttpResponseNotAllowed(["GET"])
     
-    qs = Employees.objects.select_related("document_type", "rol", "region", "province", "district")
+    qs = Employees.objects.select_related("document_type", "rol", "region", "province", "district").order_by("-created_at")
     
     # Búsqueda por cualquier dato: nombre, apellidos, email, teléfono, documento, dirección, ubicación
     search = request.GET.get("search", "").strip()

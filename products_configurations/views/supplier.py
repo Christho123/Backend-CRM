@@ -27,7 +27,7 @@ def supplier_list(request):
     if request.method != "GET":
         return HttpResponseNotAllowed(["GET"])
     
-    qs = Supplier.objects.select_related("region", "province", "district")
+    qs = Supplier.objects.select_related("region", "province", "district").order_by("-created_at")
     data = []
     for s in qs:
         data.append({

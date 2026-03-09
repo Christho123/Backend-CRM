@@ -47,7 +47,7 @@ def product_list(request):
     if request.method != "GET":
         return HttpResponseNotAllowed(["GET"])
     
-    qs = Product.objects.select_related("category", "supplier", "brand")
+    qs = Product.objects.select_related("category", "supplier", "brand").order_by("-created_at")
     data = []
     for p in qs:
         data.append({

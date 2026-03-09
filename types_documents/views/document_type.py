@@ -15,7 +15,7 @@ def document_types_list(request):
         return HttpResponseNotAllowed(["GET"])
 
     try:
-        qs = DocumentType.objects.all()
+        qs = DocumentType.objects.all().order_by("-id")
         data = [{"id": x.id, "name": x.name, "description": x.description} for x in qs]
         return JsonResponse({"document_types": data})
 

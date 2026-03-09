@@ -162,8 +162,8 @@ cython_debug/
 */migrations/*.py
 !*/migrations/__init__.py
 
-# Media files (optional - uncomment if you don't want to track media files)
-# media/
+# Media files (no versionar archivos subidos)
+media/
 
 # Static files (optional - uncomment if you don't want to track static files)
 # staticfiles/
