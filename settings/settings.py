@@ -82,9 +82,9 @@ pymysql.install_as_MySQLdb()
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'crm',
+        'NAME': 'erp',
         'USER': 'root',
-        'PASSWORD': 'Reflexo159//',
+        'PASSWORD': '123456',
         'HOST': '127.0.0.1',
         'PORT': '3306',
         'OPTIONS': {
